@@ -1,0 +1,71 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+
+// Функции системы уравнений
+double f1(double x, double y) {
+    return x * x + y * y - 2 * x - 3;
+}
+
+double f2(double x, double y) {
+    return x*x - y*y - 9;
+}
+
+// Частные производные
+double df1_dx(double x, double y) {
+    return 2 * x - 2;
+}
+
+double df1_dy(double x, double y) {
+    return 2 * y;
+}
+
+double df2_dx(double x, double y) {
+    return 2 * x;
+}
+
+double df2_dy(double x, double y) {
+    return -2 * y;
+}
+
+void modifiedNewtonMethod(double& x, double& y, double e, double max_iter) {
+    int iter = 0;
+    double dx = 0.0, dy = 0.0;
+    // Вычисление матрицы Якоби в начальной точке
+    double J = df1_dx(x, y) * df2_dy(x, y) - df1_dy(x, y) * df2_dx(x, y);
+
+
+    while (iter < max_iter) {
+        
+
+        // Вычисление коррекции
+        dx = (df2_dy(x, y) * f1(x, y) - df1_dy(x, y) * f2(x, y)) / J;
+        dy = (df1_dx(x, y) * f2(x, y) - df2_dx(x, y) * f1(x, y)) / J;
+
+        // Обновление значения приближения
+        x -= dx;
+        y -= dy;
+
+        // Проверка условия сходимости
+        if (abs(dx) < e && abs(dy) < e) {
+            cout << "Метод сошелся к решению за " << iter + 1 << " итераций." << endl;
+            cout << "x = " << x << ", y = " << y << endl;
+            return;
+        }
+        iter++;
+    }
+
+    cout << "Метод не сошелся за " << max_iter << " итераций." << endl;
+}
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+    double x0 = 2; // Начальное приближение для x
+    double y0 = 1; // Начальное приближение для y
+    double e = 0.0001; //точность
+    double max_iter = 1000; //допустимое количество итераций
+    modifiedNewtonMethod(x0, y0, e, max_iter);
+
+    return 0;
+}
